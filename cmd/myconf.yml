@@ -1,0 +1,7 @@
+host0: "hostnamefrom prod file"
+port: 1234
+debug : true 
+srv:
+  un: 1
+  deux: 2
+
