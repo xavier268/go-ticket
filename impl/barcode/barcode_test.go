@@ -25,7 +25,7 @@ func TestDM(t *testing.T) {
 	defer f.Close()
 
 	b := New()
-	b.SetFormat(D)
+	b.SetFormat(DM200x200)
 	err := b.Encode(f, "https://github.com/xavier268/go-ticket")
 	if err != nil {
 		t.Fatal(err)
