@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -12,37 +13,43 @@ import (
 // Config is the main configuration object.
 // It is an immutable, read-only object.
 type Config struct {
-	vp *viper.Viper // read from config file
-	fs *CFlags      // read from flags
+	vp      *viper.Viper // read from config file
+	started time.Time    // date the config object was created
 }
 
-// prodDefault is the default production configuration
-var prodDefault = map[string]interface{}{
-	"port":    8080,
-	"host":    "localhost",
-	"debug":   false,
-	"verbose": false,
-}
-
-const prodFileName = "myconf"
-
-// NewProdConfig gets the default production config object.
-func NewProdConfig() *Config {
-
+// NewConfig constructs a configuration.
+// name is the file name without extension,
+// confPath are the path where to look for that file ;
+// The "." directory is always included.
+// The args are the command line arguments (including the command name
+// as first argument, as in os.Args);
+// if args is nil, then os.Args is used.
+// def is a map of default key => values.
+// fs is a CFlags structure, containing the accepted flags definitions.
+func NewConfig(name string, // file name, no extension
+	confPath []string, // file config paths
+	args []string, // cli args
+	def map[string]interface{}, // default values
+	fs *CFlags, // flagset to read from
+) *Config {
 	c := new(Config)
 	c.vp = viper.New()
-	c.fs = NewTestCFlags()
+	c.started = time.Now()
 
 	// parse flags from cd line
-	c.fs.Parse(os.Args[1:])
+	if args == nil || len(args) == 0 {
+		fs.Parse(os.Args[1:])
+	} else {
+		fs.Parse(args[1:])
+	}
 
 	// merge flags, only the one visited.
 	// If flag is NOT set, the default value does not come from the flag.
-	c.fs.Visit(
+	fs.Visit(
 
 		func(f *flag.Flag) {
 			k := f.Name
-			v, ok := c.fs.m[k]
+			v, ok := fs.m[k]
 			if !ok || v == nil {
 				return
 			}
@@ -64,59 +71,88 @@ func NewProdConfig() *Config {
 	// read env data
 	c.vp.AutomaticEnv()
 
-	// read config file
-	// c.vp.SetConfigFile(prodFileName)
-	// c.vp.SetConfigType("yml")
-	c.vp.SetConfigName(prodFileName) // Set name without extension
+	// find and read config file
+	c.vp.SetConfigName(name) // Set name without extension
 	c.vp.AddConfigPath(".")
-	c.vp.AddConfigPath("../configuration/")
-	c.vp.AddConfigPath("../cmd/")
-	c.vp.AddConfigPath("./cmd/")
-	c.vp.AddConfigPath("./go-ticket/cmd/")
-	c.vp.AddConfigPath("../go-ticket/cmd/")
-	// TODO : add more natural configuration places ...
+	for _, p := range confPath {
+		c.vp.AddConfigPath(p)
+	}
 	err := c.vp.ReadInConfig()
 	if err != nil {
-		fmt.Println(err)
+		// Continue without a file
+		// fmt.Println(err)
 	}
 
 	// Set default Viper values for those not set yet
-	for k, v := range prodDefault {
+	for k, v := range def {
 		c.vp.SetDefault(k, v)
 	}
 
 	return c
 }
 
-// String gets a human-readable view of the Config.
+// String human readeable view of the Config.
 func (c *Config) String() string {
-	s := fmt.Sprintf("Configuration using file : %s\nHome : %s\nUser : %s\npwd  : %s\nhost0 :%s\n",
-		c.vp.ConfigFileUsed(), c.vp.GetString("home"), c.vp.GetString("user"),
-		c.vp.GetString("pwd"), c.vp.GetString("host0")) +
-		fmt.Sprint("\nKeys   : ")
-	for k, v := range c.vp.AllSettings() {
-		s += fmt.Sprint(k, "=", v, ", ")
+	var s string
+	if f := c.vp.ConfigFileUsed(); len(f) > 0 {
+		s += fmt.Sprintf("Using configuration from  %s\n", f)
+	} else {
+		s += fmt.Sprintf("No configuration file loaded.\n")
 	}
-	s += fmt.Sprintf("\nFlags  : ")
-	c.fs.Visit(func(f *flag.Flag) {
-		s += fmt.Sprint(f.Name, "=", f.Value.String(), ", ")
-	})
+	s += fmt.Sprintf("Started : %v ( %v ago)\n",
+		c.Started(),
+		c.Since())
+	s += fmt.Sprintf("--- Env (selected) ---\n")
+	for _, k := range []string{"home", "pwd", "user"} {
+		v := c.vp.GetString(k)
+		s += fmt.Sprintf("%s\t= %v\t(%T)\n", k, v, v)
+	}
 
-	return s + "\n"
+	s += fmt.Sprint("--- Keys & flags ---\n")
+	for k, v := range c.vp.AllSettings() {
+		s += fmt.Sprintf("%s\t= %v\t(%T)\n", k, v, v)
+	}
+	return s
 }
 
 // Dump the Configuration.
 // Used for debugging.
-func (c *Config) Dump() {
+func (c *Config) Dump() *Config {
 	fmt.Println(c.String())
+	return c
 }
 
-// GetString retrieve a string.
-// Priority is flag, then env, then config-file, then default.
+// GetInt retuns an int.
+func (c *Config) GetInt(key string) int {
+	return c.vp.GetInt(key)
+}
+
+// GetString retun a string
 func (c *Config) GetString(key string) string {
-	r := c.fs.Lookup(key).Value
-	if r != nil {
-		return r.String()
-	}
 	return c.vp.GetString(key)
+}
+
+// GetBool retuns a bool
+func (c *Config) GetBool(key string) bool {
+	return c.vp.GetBool(key)
+}
+
+// GetFloat64 return a float64
+func (c *Config) GetFloat64(key string) float64 {
+	return c.vp.GetFloat64(key)
+}
+
+// Get returns any value as an empty interface.
+func (c *Config) Get(key string) interface{} {
+	return c.vp.Get(key)
+}
+
+// Started gives time when Config was cretaed.
+func (c *Config) Started() time.Time {
+	return c.started
+}
+
+// Since provides duration since strted.
+func (c *Config) Since() time.Duration {
+	return time.Now().Sub(c.started)
 }

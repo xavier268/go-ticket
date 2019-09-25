@@ -11,14 +11,12 @@ type CFlags struct {
 	m             map[string]interface{} // Pointers to the underlying vars
 }
 
-// NewCFlags constructs a new CFlags.
-// Same syntax as flag.NewFlagSet.
-func NewCFlags(name string, errHling flag.ErrorHandling) *CFlags {
-	f := &CFlags{
-		flag.NewFlagSet(name, errHling),
+// NewCFlags constructs a new CFlags, with no name and ExitOnError setting.
+func NewCFlags() *CFlags {
+	return &CFlags{
+		flag.NewFlagSet("", flag.ExitOnError),
 		make(map[string]interface{}),
 	}
-	return f
 }
 
 // Add will add a flag to the CFlags.
@@ -79,22 +77,5 @@ func (f *CFlags) Alias(name, alias string) *CFlags {
 		fmt.Printf("\nUnknown type for %v of type %T\n", v, v)
 		panic("Type is not implemented yet.")
 	}
-	return f
-}
-
-// NewTestCFlags should be called to initialize the flags.
-// It should be called before using any flag values.
-// It returns both the FlagSet and an map of the vars that
-// points to the actual values of the flags.
-func NewTestCFlags() *CFlags {
-
-	f := NewCFlags("TestFlagSet", flag.ExitOnError)
-
-	f.Add("host", "defhostflag", "host name").
-		Alias("host", "h").
-		Add("port", 8080, "port number for the server").
-		Alias("port", "p").
-		Add("float", 0.0, "a float parameter")
-
 	return f
 }
