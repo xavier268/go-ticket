@@ -17,13 +17,13 @@ type Config struct {
 	started time.Time    // date the config object was created
 }
 
-// NewConfig constructs a configuration.
+// NewConfig constructs a configuration, where
 // name is the file name without extension,
-// confPath are the path where to look for that file ;
-// The "." directory is always included.
-// The args are the command line arguments (including the command name
-// as first argument, as in os.Args);
-// if args is nil, then os.Args is used.
+// confPath are the path where to look for that file (
+// (the "." directory is always included),
+// args are the command line arguments (including the command name
+// as first argument, as in os.Args).
+// If args is nil, then os.Args is used.
 // def is a map of default key => values.
 // fs is a CFlags structure, containing the accepted flags definitions.
 func NewConfig(name string, // file name, no extension
@@ -122,37 +122,38 @@ func (c *Config) Dump() *Config {
 	return c
 }
 
-// GetInt retuns an int.
+// GetInt returns an int.
 func (c *Config) GetInt(key string) int {
 	return c.vp.GetInt(key)
 }
 
-// GetString retun a string
+// GetString returns a string
 func (c *Config) GetString(key string) string {
 	return c.vp.GetString(key)
 }
 
-// GetBool retuns a bool
+// GetBool returns a bool
 func (c *Config) GetBool(key string) bool {
 	return c.vp.GetBool(key)
 }
 
-// GetFloat64 return a float64
+// GetFloat64 returns a float64
 func (c *Config) GetFloat64(key string) float64 {
 	return c.vp.GetFloat64(key)
 }
 
 // Get returns any value as an empty interface.
+// Typically use for struct or arrays.
 func (c *Config) Get(key string) interface{} {
 	return c.vp.Get(key)
 }
 
-// Started gives time when Config was cretaed.
+// Started gives time when Config was created.
 func (c *Config) Started() time.Time {
 	return c.started
 }
 
-// Since provides duration since strted.
+// Since provides duration since started.
 func (c *Config) Since() time.Duration {
 	return time.Now().Sub(c.started)
 }

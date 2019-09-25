@@ -52,7 +52,7 @@ func (f *CFlags) Add(name string, defValue interface{}, usage string) *CFlags {
 
 // Alias creates a alias (eg "p" for "port").
 // Aliases will share the same underlying value.
-// Name must have been decalred already.
+// Name must have been declared beforehand.
 func (f *CFlags) Alias(name, alias string) *CFlags {
 
 	if f.Parsed() {

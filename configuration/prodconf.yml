@@ -1,4 +1,3 @@
 comments.prodfile : 
-  - "This is the configuration,"
-  - "use only lowercase keys."
-
+  - "This is the configuration from prodconf.yml,"
+  - "remember to use only lowercase keys."
