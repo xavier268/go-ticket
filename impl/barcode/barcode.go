@@ -1,3 +1,5 @@
+// Package barcode provide easy to use services to produce barcode images.
+// Internally, it relies on https://github.com/boombuler/barcode
 package barcode
 
 import (
