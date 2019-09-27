@@ -24,7 +24,7 @@ func NewProdConfig() *Config {
 	}
 
 	// Then, add actual production flags.
-	flags.Add(key.PORT, 8080, "port to connect to server").Alias(key.PORT, "p").
+	flags.
 		Add(key.ADDR, "localhost", "domain name or ip of server").Alias(key.ADDR, "a").
 		Add(key.VERBOSE, false, "print verbose information").Alias(key.VERBOSE, "v")
 
