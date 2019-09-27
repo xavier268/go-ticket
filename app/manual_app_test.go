@@ -8,6 +8,7 @@ import (
 	"github.com/xavier268/go-ticket/configuration/key"
 )
 
+// gettestConfig provides a test configuration.
 func getTestConfig() *configuration.Config {
 	return configuration.NewConfig(
 		"testapp",
@@ -16,7 +17,10 @@ func getTestConfig() *configuration.Config {
 		map[string]interface{}{
 			key.ADDR:       ":8080",
 			key.PUBLICADDR: "http://192.168.1.9",
-			key.VERBOSE:    true},
+			key.VERBOSE:    true,
+			key.COOKIEKEY:  "did",
+			key.COOKIEAGE:  3600 * 24, //  seconds default for device id before renewal
+		},
 		configuration.NewCFlags(),
 	)
 }
@@ -28,9 +32,12 @@ func TestConfigOK(t *testing.T) {
 	}
 }
 func TestApp(t *testing.T) {
-	//t.Skip()
 	a := NewApp(getTestConfig())
-	go a.Run() // run server for 10 seconds, then close it ...
-	time.Sleep(2000 * time.Second)
+	go a.Run() // run server for 5 minutes, then close it ...
+	if testing.Short() {
+		time.Sleep(5 * time.Second)
+	} else {
+		time.Sleep(15 * time.Minute)
+	}
 	a.Close()
 }

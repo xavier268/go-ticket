@@ -2,7 +2,9 @@
 package app
 
 import (
+	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -13,17 +15,22 @@ import (
 
 // App is the application server.
 type App struct {
-	srv *http.Server          // server
-	cnf *configuration.Config // config
-	str common.Store          // data store
+	srv  *http.Server          // server
+	cnf  *configuration.Config // config
+	str  common.Store          // data store
+	rand *rand.Rand            // random generator
 }
 
 // NewApp constructs  a new AppServer.
 // It is configured from the provided configuration.
 func NewApp(c *configuration.Config) *App {
 
-	a := &App{new(http.Server), c, nil}
+	a := new(App)
+	a.srv = new(http.Server)
 	a.srv.Addr = c.GetString(key.ADDR)
+	a.cnf = c
+	a.str = nil                                              // TODO
+	a.rand = rand.New(rand.NewSource(time.Now().UnixNano())) // initialize random gen
 
 	// dump config if verbose
 	if c.GetBool(key.VERBOSE) {
@@ -32,7 +39,8 @@ func NewApp(c *configuration.Config) *App {
 
 	// Set  handlers in a new mux
 	mux := http.NewServeMux()
-	mux.Handle("/ping/", a.messageHdlr("pong !"))
+	mux.HandleFunc("/ping/", a.pingHdlf)
+	mux.HandleFunc("/qr/", a.qrHdlf)
 
 	// Save mux in server
 	a.srv.Handler = mux
@@ -48,37 +56,13 @@ func (a *App) Run() error {
 	return a.srv.ListenAndServe()
 }
 
-// messageHdlr returns  a message sending handler.
-// A set/read cookie
-func (a *App) messageHdlr(txt string) http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Message to be sent : ", txt)
-			// read cookie
-			fmt.Println("Read cookie : ", readCookie(r, "moncook"))
-			// set cookie
-			setCookie(w, "moncook", "ma valeur", 100*time.Second)
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, txt)
-		},
-	)
-}
-
-// tracingMdlw is a tracing middleware for debugging.
-func (a *App) tracingMdlw(next http.Handler) http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("About to serve request ...")
-			next.ServeHTTP(w, r)
-			fmt.Println(".... request was served")
-		},
-	)
-}
-
 // Close the App.
+// Server is closed using shutdown, with a 1 mn timeout.
 func (a *App) Close() error {
 	if a.srv != nil {
-		a.srv.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+		defer cancel()
+		a.srv.Shutdown(ctx)
 	}
 	if a.str != nil {
 		a.str.Close()

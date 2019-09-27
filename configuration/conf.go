@@ -103,7 +103,7 @@ func (c *Config) String() string {
 		c.Started(),
 		c.Since())
 	s += fmt.Sprintf("--- Env (selected) ---\n")
-	for _, k := range []string{"home", "pwd", "user"} {
+	for _, k := range []string{"hostname", "home", "pwd", "user"} {
 		v := c.vp.GetString(k)
 		s += fmt.Sprintf("%s\t= %v\t(%T)\n", k, v, v)
 	}
