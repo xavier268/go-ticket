@@ -5,12 +5,13 @@ type Role byte
 
 // Predfined Roles for devices.
 const (
-	Default Role = iota // Zero-value, does nothing.
-	Entry
-	Exit
-	Inside
-	Outside
-	Admin
+	RoleNone Role = iota // Zero-value, does nothing.
+	RoleEntry
+	RoleExit
+	RoleInside
+	RoleOutside
+	RoleAdmin
+	RoleSuper
 )
 
 // Device defines the status of a given device.

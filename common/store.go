@@ -4,7 +4,7 @@ package common
 type Store interface {
 	Pinger
 	Close() error
-	GetDevice(deviceID string) Device
-	SetDevice(device Device) (deviceID string)
-	UnSetDevice(device Device)
+	GetRole(deviceID string) Role
+	SetRole(deviceID string, role Role)
+	UnsetRole(deviceID string)
 }

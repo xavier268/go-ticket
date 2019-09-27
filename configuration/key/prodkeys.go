@@ -17,5 +17,5 @@ const ( //      keys ...       // are pointing to ...
 	COOKIEAGE  = "cookieage"   // int, Default max-age in seconds for the device id cookie.
 )
 
-// TESTFLAGS are the flags that are added during go test and that should be ignored.
-var TESTFLAGS = []string{"test.testlogfile", "test.v"}
+// TESTFLAGS are the flags that may be added during go test and that should be ignored.
+var TESTFLAGS = []string{"test.testlogfile", "test.v", "test.short"}

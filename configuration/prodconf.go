@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"flag"
 	"os"
 
 	"github.com/xavier268/go-ticket/configuration/key"
@@ -16,11 +15,9 @@ func NewProdConfig() *Config {
 
 	flags := NewCFlags()
 
-	// If go test is running, add some more flags and ignore them
-	if flag.Lookup("test.v") != nil {
-		for _, k := range key.TESTFLAGS {
-			flags.Add(k, "", "DO NOT USE - Reserved for the go test configuration.")
-		}
+	// Add test flags, in case we test ;-)
+	for _, k := range key.TESTFLAGS {
+		flags.Add(k, "", "DO NOT USE - Reserved for the go test configuration.")
 	}
 
 	// Then, add actual production flags.
