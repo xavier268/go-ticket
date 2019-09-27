@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/xavier268/go-ticket/configuration/key"
+	"github.com/xavier268/go-ticket/common/key"
 )
 
 // getDeviceID gets the device ID from the request.
@@ -15,9 +15,13 @@ func (a *App) getDeviceID(w http.ResponseWriter, r *http.Request) string {
 	name := a.cnf.GetString(key.COOKIEKEY)
 	age := a.cnf.GetInt(key.COOKIEAGE)
 	var v string
+	verbose := a.cnf.GetBool(key.VERBOSE)
 
 	c, err := r.Cookie(name)
-	fmt.Println("Cookie read : ", c)
+
+	if verbose {
+		fmt.Println("Cookie read : ", c)
+	}
 
 	if err == nil {
 		// cookie  set .. use value

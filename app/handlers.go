@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/xavier268/go-ticket/common/key"
 	"github.com/xavier268/go-ticket/impl/barcode"
 )
 
@@ -43,8 +44,9 @@ func (a *App) qrHdlf(w http.ResponseWriter, r *http.Request) {
 
 	// read the qr parameter
 	p := r.URL.Query().Get("qr")
-	fmt.Println("Reading qr = ", p)
-
+	if a.cnf.GetBool(key.VERBOSE) {
+		fmt.Println("Serving qr code for qr = ", p)
+	}
 	w.Header().Set("Content-type", "image/png")
 	w.WriteHeader(http.StatusOK)
 	barcode.New().SetFormat(barcode.QR200x200H).Encode(w, p)

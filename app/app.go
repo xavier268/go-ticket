@@ -10,7 +10,7 @@ import (
 
 	"github.com/xavier268/go-ticket/common"
 	"github.com/xavier268/go-ticket/configuration"
-	"github.com/xavier268/go-ticket/configuration/key"
+	"github.com/xavier268/go-ticket/common/key"
 )
 
 // App is the application server.

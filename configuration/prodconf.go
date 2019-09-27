@@ -3,15 +3,17 @@ package configuration
 import (
 	"os"
 
-	"github.com/xavier268/go-ticket/configuration/key"
+	"github.com/xavier268/go-ticket/common/key"
 )
 
 // NewProdConfig defines a production config object.
 // Define your own, or adjust this one.
 func NewProdConfig() *Config {
 
-	fname := "prodconf"
-	fpaths := []string{"./configuration", "../configuration"}
+	fname := "go-ticket"
+	fpaths := []string{"./cmd", "../cmd",
+		"./configuration", "../configuration",
+		"../../etc", "../etc", "/etc/"}
 
 	flags := NewCFlags()
 
@@ -21,17 +23,18 @@ func NewProdConfig() *Config {
 	}
 
 	// Then, add actual production flags.
+	// NO ALIAS in production (buggy, needs fixing)
 	flags.
-		Add(key.ADDR, "localhost", "domain name or ip of server").Alias(key.ADDR, "a").
-		Add(key.VERBOSE, false, "print verbose information").Alias(key.VERBOSE, "v")
+		Add(key.ADDR, "", "full address URL to run the server").
+		Add(key.VERBOSE, false, "print verbose information")
 
+	// Define defaults key values.
 	def := map[string]interface{}{
-		"port":    8080,
-		"host":    "localhost",
-		"debug":   false,
-		"verbose": false,
-		"version": "0.10",
-		"prod":    true,
+		key.VERBOSE:   false,
+		key.VERSION:   "0.12",
+		key.PROD:      true,
+		key.COOKIEKEY: "did",
+		key.COOKIEAGE: 3600 * 24 * 15, // 15 jours
 	}
 
 	return NewConfig(fname, fpaths, os.Args, def, flags)

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/xavier268/go-ticket/configuration"
-	"github.com/xavier268/go-ticket/configuration/key"
+	"github.com/xavier268/go-ticket/common/key"
 )
 
 // gettestConfig provides a test configuration.
