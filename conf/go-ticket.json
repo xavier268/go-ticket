@@ -1,0 +1,11 @@
+{
+    "comment": [
+         " ... are ignored.",
+         "Note that all filds must refelct the name and structure of the Conf type",
+         "Fields that do not exist in Conf, like this 'comment' field, are silently ignored"
+    ],
+    "Addr" : {
+        "Comment" : "this is the public addresse",
+        "Public" : "http://192.168.1.9"
+    }
+}
