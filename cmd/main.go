@@ -2,15 +2,14 @@ package main
 
 import (
 	"github.com/xavier268/go-ticket/app"
-	"github.com/xavier268/go-ticket/common/key"
-	"github.com/xavier268/go-ticket/configuration"
+	"github.com/xavier268/go-ticket/conf"
 )
 
 func main() {
 
-	c := configuration.NewProdConfig()
+	c := conf.NewConf()
 
-	if c.GetBool(key.VERBOSE) {
+	if c.Test.Verbose {
 		c.Dump()
 	}
 

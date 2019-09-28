@@ -14,17 +14,18 @@ import (
 
 // Conf defines the structure of a configuration object.
 type Conf struct {
-	Start  time.Time // Date started
-	Parsed struct {  // What exactly did we read yet ?
+	Version string // Version
+
+	Command string    // Command name typed
+	Args    []string  // Non-flag arguments
+	Start   time.Time // Date started
+
+	Parsed struct { // What exactly did we read yet ?
 		Default bool
 		File    bool
 		Env     bool
 		Flags   bool
 	}
-	Version string // Version
-
-	Command string   // Command name typed
-	Args    []string // Non-flag arguments
 
 	File struct {
 		Name  string   // Conf file, with json extension
@@ -54,6 +55,17 @@ type Conf struct {
 	}
 }
 
+// String huan readable.
+func (c *Conf) String() string {
+
+	s, e := json.MarshalIndent(c, "", " ")
+	if e != nil {
+		fmt.Println(e)
+	}
+	return string(s)
+
+}
+
 // NewConf constructs and parse a new Conf object.
 // For testing purposes, you may alter it afterwards.
 func NewConf() *Conf {
@@ -67,7 +79,7 @@ func NewConf() *Conf {
 
 // Dump prints a human readable config.
 func (c *Conf) Dump() *Conf {
-	fmt.Printf("\n%v\n", *c)
+	fmt.Println(c.String())
 	return c
 }
 
@@ -172,7 +184,7 @@ func (c *Conf) loadFlags(from []string) {
 	// Display default flags.
 	// fs.PrintDefaults()
 
-	fmt.Println("Flag parsed : ", *fs)
+	//fmt.Println("Flag parsed : ", *fs)
 
 	c.Parsed.Flags = true
 }

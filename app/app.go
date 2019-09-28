@@ -9,31 +9,30 @@ import (
 	"time"
 
 	"github.com/xavier268/go-ticket/common"
-	"github.com/xavier268/go-ticket/configuration"
-	"github.com/xavier268/go-ticket/common/key"
+	"github.com/xavier268/go-ticket/conf"
 )
 
 // App is the application server.
 type App struct {
-	srv  *http.Server          // server
-	cnf  *configuration.Config // config
-	str  common.Store          // data store
-	rand *rand.Rand            // random generator
+	srv  *http.Server // server
+	cnf  *conf.Conf   // config
+	str  common.Store // data store
+	rand *rand.Rand   // random generator
 }
 
 // NewApp constructs  a new AppServer.
 // It is configured from the provided configuration.
-func NewApp(c *configuration.Config) *App {
+func NewApp(c *conf.Conf) *App {
 
 	a := new(App)
 	a.srv = new(http.Server)
-	a.srv.Addr = c.GetString(key.ADDR)
+	a.srv.Addr = c.Addr.Private
 	a.cnf = c
 	a.str = nil                                              // TODO
 	a.rand = rand.New(rand.NewSource(time.Now().UnixNano())) // initialize random gen
 
 	// dump config if verbose
-	if c.GetBool(key.VERBOSE) {
+	if c.Test.Verbose {
 		c.Dump()
 	}
 
@@ -50,8 +49,9 @@ func NewApp(c *configuration.Config) *App {
 
 // Run the app
 func (a *App) Run() error {
-	if a.cnf.GetBool(key.VERBOSE) {
-		fmt.Println("Listening on ", a.cnf.GetString(key.ADDR))
+	if a.cnf.Test.Verbose {
+		fmt.Println("Listening privately on ", a.cnf.Addr.Private)
+		fmt.Println("Listening publicly on ", a.cnf.Addr.Public)
 	}
 	return a.srv.ListenAndServe()
 }

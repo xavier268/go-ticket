@@ -5,17 +5,15 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/xavier268/go-ticket/common/key"
 )
 
 // getDeviceID gets the device ID from the request.
 // If no device ID set yet, create one and set it as a cookie in the response headers.
 func (a *App) getDeviceID(w http.ResponseWriter, r *http.Request) string {
-	name := a.cnf.GetString(key.COOKIEKEY)
-	age := a.cnf.GetInt(key.COOKIEAGE)
+	name := a.cnf.Cookie.Name
+	age := a.cnf.Cookie.MaxAge
 	var v string
-	verbose := a.cnf.GetBool(key.VERBOSE)
+	verbose := a.cnf.Test.Verbose
 
 	c, err := r.Cookie(name)
 

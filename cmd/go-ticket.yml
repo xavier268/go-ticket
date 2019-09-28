@@ -1,5 +1,0 @@
-# This is the configuration from go-ticket.yml
-# Remember to use only lowercase keys."
-
-addr: ":8080"
-paddr: "http://192.168.1.9"
