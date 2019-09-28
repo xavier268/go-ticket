@@ -55,7 +55,7 @@ type Conf struct {
 	}
 }
 
-// String huan readable.
+// String human readable.
 func (c *Conf) String() string {
 
 	s, e := json.MarshalIndent(c, "", " ")
