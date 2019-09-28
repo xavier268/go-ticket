@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// getDeviceID gets the device ID from the request.
+// getDeviceID get (or if necessary set) the device ID from the request.
 // If no device ID set yet, create one and set it as a cookie in the response headers.
 func (a *App) getDeviceID(w http.ResponseWriter, r *http.Request) string {
 	name := a.cnf.Cookie.Name

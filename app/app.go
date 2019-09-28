@@ -10,6 +10,7 @@ import (
 
 	"github.com/xavier268/go-ticket/common"
 	"github.com/xavier268/go-ticket/conf"
+	"github.com/xavier268/go-ticket/impl/memstore"
 )
 
 // App is the application server.
@@ -28,8 +29,8 @@ func NewApp(c *conf.Conf) *App {
 	a.srv = new(http.Server)
 	a.srv.Addr = c.Addr.Private
 	a.cnf = c
-	a.str = nil                                              // TODO
-	a.rand = rand.New(rand.NewSource(time.Now().UnixNano())) // initialize random gen
+	a.str = memstore.New()
+	a.rand = rand.New(rand.NewSource(time.Now().UnixNano() + 111111111)) // initialize random gen
 
 	// dump config if verbose
 	if c.Test.Verbose {
@@ -38,8 +39,10 @@ func NewApp(c *conf.Conf) *App {
 
 	// Set  handlers in a new mux
 	mux := http.NewServeMux()
-	mux.HandleFunc("/ping/", a.pingHdlf)
 	mux.HandleFunc("/qr/", a.qrHdlf)
+	mux.HandleFunc("/a/", a.activateHdlf)
+	mux.HandleFunc("/admin/", a.adminHdlf)
+	mux.HandleFunc("/ping/", a.pingHdlf)
 
 	// Save mux in server
 	a.srv.Handler = mux
