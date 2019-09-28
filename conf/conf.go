@@ -53,6 +53,10 @@ type Conf struct {
 		Name   string // name of devide id cookie
 		MaxAge int    // in seconds
 	}
+	Superuser struct { // Super user login credentials.
+		Name     string
+		Password string
+	}
 }
 
 // String human readable.
@@ -96,6 +100,9 @@ func (c *Conf) loadDefault() {
 	c.Addr.Private = ":8080"
 	c.Cookie.Name = "deviceid"
 	c.Cookie.MaxAge = 3600 * 24 // 24 h
+
+	c.Superuser.Name = "admin"
+	c.Superuser.Password = "changeit"
 }
 
 // loadFile read the config file, json format only.

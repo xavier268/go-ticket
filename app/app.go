@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/xavier268/go-ticket/common"
@@ -46,6 +47,12 @@ func NewApp(c *conf.Conf) *App {
 
 	// Save mux in server
 	a.srv.Handler = mux
+
+	// Set root password if not set
+	if len(a.cnf.Superuser.Password) < 8 {
+		a.cnf.Superuser.Password = strconv.FormatInt(a.rand.Int63(), 36)
+		fmt.Printf("Changed root password to : %s\n", a.cnf.Superuser.Password)
+	}
 
 	return a
 }
