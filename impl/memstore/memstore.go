@@ -15,17 +15,19 @@ import (
 type MemStore struct {
 	did  map[string]common.Role // deviceID to roles
 	act  map[string]common.Role // pending activation requests
+	tkt  map[string]ticket      // ticket database
 	rand *rand.Rand             // random generator
 }
 
 // Compiler check
-var _ common.Store = new(MemStore)
+var _ common.Storer = new(MemStore)
 
 // New creates a new MemStore.
 func New() *MemStore {
 	s := new(MemStore)
 	s.did = make(map[string]common.Role)
 	s.act = make(map[string]common.Role)
+	s.tkt = make(map[string]ticket)
 	// initialize random gen
 	s.rand = rand.New(rand.NewSource(time.Now().UnixNano() + 9999999))
 	return s

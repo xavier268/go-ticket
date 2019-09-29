@@ -19,7 +19,7 @@ import (
 type App struct {
 	srv  *http.Server    // server
 	cnf  *conf.Conf      // config
-	str  common.Store    // data store
+	str  common.Storer   // data store
 	rand *rand.Rand      // random generator
 	bc   common.BarCoder // barcode encoding
 }

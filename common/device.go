@@ -10,8 +10,7 @@ const (
 	RoleNone Role = iota // Zero-value, does nothing.
 	RoleEntry
 	RoleExit
-	RoleInside
-	RoleOutside
+	RoleReview
 	RoleAdmin
 	RoleSuper
 )
@@ -31,10 +30,8 @@ func (r *Role) String() string {
 		return "Entry"
 	case RoleExit:
 		return "Exit"
-	case RoleInside:
-		return "Inside"
-	case RoleOutside:
-		return "Outside"
+	case RoleReview:
+		return "Review"
 	case RoleAdmin:
 		return "Admin"
 	case RoleSuper:
