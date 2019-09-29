@@ -15,26 +15,13 @@ import (
 // BC is the BarCoder inmplementation.
 // It uses https://github.com/boombuler/barcode
 type BC struct {
-	enc EncodingFormat
-	// Encodes in the requested format.
-	Encode func(io.Writer, string) error
-	w, h   int      // dimensions
-	qr     struct { // Parameters for qr encoding
+	enc  common.EncodingFormat
+	w, h int      // dimensions
+	qr   struct { // Parameters for qr encoding
 		level qr.ErrorCorrectionLevel
 		mode  qr.Encoding
 	}
 }
-
-// EncodingFormat  defines QR, DataMatrix, ...
-type EncodingFormat int
-
-// Encoding formats that are available.
-const (
-	QR200x200H EncodingFormat = iota
-	QR300x300H
-	DM200x200
-	DM300x300
-)
 
 // Compiler checks interface contract.
 var _ common.BarCoder = new(BC)
@@ -43,37 +30,51 @@ var _ common.BarCoder = new(BC)
 // SDefaults to QR200x200H
 func New() *BC {
 	b := new(BC)
-	b.SetFormat(QR200x200H)
+	b.SetFormat(common.QR200x200H)
 	return b
 }
 
 // SetFormat sets the EncodingFormat to use.
-func (bc *BC) SetFormat(enc EncodingFormat) *BC {
+func (bc *BC) SetFormat(enc common.EncodingFormat) {
 	switch enc {
-	case QR200x200H:
-		bc.enc = QR200x200H
+	case common.QR200x200H:
+		bc.enc = common.QR200x200H
 		bc.w, bc.h = 200, 200
 		bc.qr.level = qr.H
 		bc.qr.mode = qr.Auto
-		bc.Encode = bc.qrEncoder
-	case QR300x300H:
-		bc.enc = QR300x300H
+
+	case common.QR300x300H:
+		bc.enc = common.QR300x300H
 		bc.w, bc.h = 300, 300
 		bc.qr.level = qr.H
 		bc.qr.mode = qr.Auto
-		bc.Encode = bc.qrEncoder
-	case DM200x200:
-		bc.enc = DM200x200
+
+	case common.DM200x200:
+		bc.enc = common.DM200x200
 		bc.w, bc.h = 200, 200
-		bc.Encode = bc.dmEncoder
-	case DM300x300:
-		bc.enc = DM300x300
+
+	case common.DM300x300:
+		bc.enc = common.DM300x300
 		bc.w, bc.h = 300, 300
-		bc.Encode = bc.dmEncoder
+
 	default:
 		panic("Format is not recogized ?")
 	}
-	return bc
+}
+
+// Encode into a 'barcode' according to the specified encoding format.
+func (bc *BC) Encode(w io.Writer, txt string) error {
+
+	switch bc.enc {
+	case common.QR200x200H, common.QR300x300H:
+		return bc.qrEncoder(w, txt)
+
+	case common.DM200x200, common.DM300x300:
+		return bc.dmEncoder(w, txt)
+
+	default:
+		panic("Format is not recogized ?")
+	}
 }
 
 // qrEncoder encodes as qr-code png into an io.Writer

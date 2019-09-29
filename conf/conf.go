@@ -10,6 +10,8 @@ import (
 	"path"
 	"strings"
 	"time"
+
+	"github.com/xavier268/go-ticket/common"
 )
 
 // Conf defines the structure of a configuration object.
@@ -49,6 +51,19 @@ type Conf struct {
 		Public  string // External addr (eg http://jhg.com:80)
 		Private string // Internal addr (eg :8080)
 	}
+
+	API struct { // path fragments for various pages
+		QRImage    string // To display qr code
+		Ping       string //
+		Admin      string // Admin page
+		Activate   string // Activate a role
+		QueryParam struct {
+			QRText              string
+			Ticket              string
+			ActivationRequestID string
+		}
+	}
+
 	Cookie struct {
 		Name   string // name of devide id cookie
 		MaxAge int    // in seconds
@@ -56,6 +71,10 @@ type Conf struct {
 	Superuser struct { // Super user login credentials.
 		Name     string
 		Password string
+	}
+
+	Barcode struct {
+		Format common.EncodingFormat // Encoding format for qr/datamatrix code.
 	}
 }
 
@@ -98,11 +117,26 @@ func (c *Conf) loadDefault() {
 	c.File.Paths = append(c.File.Paths, ".", "../conf", "./conf")
 
 	c.Addr.Private = ":8080"
+
+	// API fragments to bind to handlers.
+	// Note that slashes are required.
+	c.API.QRImage = "/q/"
+	c.API.Ping = "/ping/"
+	c.API.Admin = "/admin/"
+	c.API.Activate = "/act/"
+
+	// Url QUERY parameters names, no slashes.
+	c.API.QueryParam.QRText = "c"
+	c.API.QueryParam.Ticket = "t"
+	c.API.QueryParam.ActivationRequestID = "a"
+
 	c.Cookie.Name = "deviceid"
 	c.Cookie.MaxAge = 3600 * 24 // 24 h
 
 	c.Superuser.Name = "admin"
 	c.Superuser.Password = "changeit"
+
+	c.Barcode.Format = common.QR300x300H
 }
 
 // loadFile read the config file, json format only.

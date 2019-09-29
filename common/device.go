@@ -3,7 +3,7 @@ package common
 import "fmt"
 
 // Role defines the role a device can be granted.
-type Role byte
+type Role int
 
 // Predfined Roles for devices.
 const (

@@ -34,5 +34,10 @@ func (a *App) pingHdlf(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "\n<br/><h2>Configuration</h2><pre>%s</pre>",
 		//strings.Replace(a.cnf.String(), "\n", "\n<br>", -1))
 		a.cnf.String())
+
+	// dump store.
+	fmt.Fprintf(w, "\n<br/><h2>MemStore dump</h2><br/><pre>%v</pre>", a.str.String())
+
 	fmt.Fprintf(w, "</html>")
+
 }

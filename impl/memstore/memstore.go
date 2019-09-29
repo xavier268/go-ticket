@@ -2,6 +2,7 @@
 package memstore
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"time"
@@ -62,7 +63,10 @@ func (s *MemStore) Activate(deviceID string, requestID string) (common.Role, err
 	if !ok {
 		return common.RoleNone, common.ErrorInvalidActivationRequest
 	}
-	delete(s.act, requestID) // prevent reuse !
+	// prevent reuse !
+	delete(s.act, requestID)
+	// Do the actual activation
+	s.did[deviceID] = role
 	return role, nil
 }
 
@@ -71,4 +75,17 @@ func (s *MemStore) CreateRequestID(role common.Role) (rq string) {
 	rq = strconv.FormatInt(s.rand.Int63(), 36)
 	s.act[rq] = role
 	return rq
+}
+
+// String() for debugging.
+func (s *MemStore) String() string {
+	res := "\n=== MemStore ==\nDevices registred :"
+	for k, v := range s.did {
+		res += fmt.Sprintf("\n   Device %20.20s => %s", k, v.String())
+	}
+	res += "\nActivation requests pending :"
+	for k, v := range s.act {
+		res += fmt.Sprintf("\n   RequestID %20.20s => %s", k, v.String())
+	}
+	return res + "\n"
 }

@@ -14,4 +14,7 @@ type Store interface {
 
 	// Activate (once) using the generated requestID
 	Activate(deviceID string, requestID string) (Role, error)
+
+	// String provides some huma readable statistics
+	String() string
 }

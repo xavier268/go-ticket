@@ -11,15 +11,17 @@ import (
 
 	"github.com/xavier268/go-ticket/common"
 	"github.com/xavier268/go-ticket/conf"
+	"github.com/xavier268/go-ticket/impl/barcode"
 	"github.com/xavier268/go-ticket/impl/memstore"
 )
 
 // App is the application server.
 type App struct {
-	srv  *http.Server // server
-	cnf  *conf.Conf   // config
-	str  common.Store // data store
-	rand *rand.Rand   // random generator
+	srv  *http.Server    // server
+	cnf  *conf.Conf      // config
+	str  common.Store    // data store
+	rand *rand.Rand      // random generator
+	bc   common.BarCoder // barcode encoding
 }
 
 // NewApp constructs  a new AppServer.
@@ -32,7 +34,8 @@ func NewApp(c *conf.Conf) *App {
 	a.cnf = c
 	a.str = memstore.New()
 	a.rand = rand.New(rand.NewSource(time.Now().UnixNano() + 111111111)) // initialize random gen
-
+	a.bc = barcode.New()
+	a.bc.SetFormat(a.cnf.Barcode.Format)
 	// dump config if verbose
 	if c.Test.Verbose {
 		c.Dump()
@@ -40,10 +43,10 @@ func NewApp(c *conf.Conf) *App {
 
 	// Set  handlers in a new mux
 	mux := http.NewServeMux()
-	mux.HandleFunc("/qr/", a.qrHdlf)
-	mux.HandleFunc("/a/", a.activateHdlf)
-	mux.HandleFunc("/admin/", a.adminHdlf)
-	mux.HandleFunc("/ping/", a.pingHdlf)
+	mux.HandleFunc(c.API.QRImage, a.qrHdlf)
+	mux.HandleFunc(c.API.Activate, a.activateHdlf)
+	mux.HandleFunc(c.API.Admin, a.adminHdlf)
+	mux.HandleFunc(c.API.Ping, a.pingHdlf)
 
 	// Save mux in server
 	a.srv.Handler = mux

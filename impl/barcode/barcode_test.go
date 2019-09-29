@@ -3,6 +3,8 @@ package barcode
 import (
 	"os"
 	"testing"
+
+	"github.com/xavier268/go-ticket/common"
 )
 
 func TestQR(t *testing.T) {
@@ -11,7 +13,7 @@ func TestQR(t *testing.T) {
 	defer f.Close()
 
 	b := New()
-	b.SetFormat(QR200x200H)
+	b.SetFormat(common.QR200x200H)
 	err := b.Encode(f, "https://github.com/xavier268/go-ticket")
 	if err != nil {
 		t.Fatal(err)
@@ -25,7 +27,7 @@ func TestDM(t *testing.T) {
 	defer f.Close()
 
 	b := New()
-	b.SetFormat(DM200x200)
+	b.SetFormat(common.DM200x200)
 	err := b.Encode(f, "https://github.com/xavier268/go-ticket")
 	if err != nil {
 		t.Fatal(err)
