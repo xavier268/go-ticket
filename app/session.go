@@ -58,21 +58,20 @@ func (a *App) Authorize(w http.ResponseWriter, r *http.Request, minimalRole comm
 	ss.QRTxt = r.URL.Query().Get(a.cnf.API.QueryParam.QRText)
 
 	// Read credentials if provided
-
-	p := ""
-	ss.CredentialsUser, p, ss.CredentialsProvided = r.BasicAuth()
+	
+	ss.CredentialsUser, pwd, ss.CredentialsProvided = r.BasicAuth()
 	ss.CredentialsValid = ss.CredentialsProvided &&
 		ss.CredentialsUser == a.cnf.Superuser.Name &&
-		p == a.cnf.Superuser.Password
+		pwd == a.cnf.Superuser.Password
 
 	if ss.CredentialsProvided && ss.CredentialsValid {
 		ss.Role = common.RoleSuper
 	}
 
-	// Current authorization is below expectation,
-	// Ask (again) for authentication
+	// Current authorization result is below expectation,
+	// Ask (again) for authentication, and return nil to indicate failure.
 	if ss.Role < minimalRole {
-		w.Header().Add("WWW-Authenticate", "Basic realm=go-ticket")
+		w.Header().Add("WWW-Authenticate", "Basic realm=" + a.cnf.Superuser.Realm)
 		w.WriteHeader(http.StatusUnauthorized)
 		return nil
 	}

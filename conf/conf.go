@@ -72,6 +72,7 @@ type Conf struct {
 	Superuser struct { // Super user login credentials.
 		Name     string
 		Password string
+		Realm    string // Realm for basic auth
 	}
 
 	Barcode struct {
@@ -109,7 +110,7 @@ func (c *Conf) Dump() *Conf {
 
 // loadDefault set the defaults.
 func (c *Conf) loadDefault() {
-	c.Version = "0.14"
+	c.Version = "0.15"
 	c.Start = time.Now()
 
 	c.Parsed.Default = true
@@ -137,6 +138,7 @@ func (c *Conf) loadDefault() {
 
 	c.Superuser.Name = "admin"
 	c.Superuser.Password = "changeit"
+	c.Superuser.Realm = "go-ticket"
 
 	c.Barcode.Format = common.QR300x300H
 }
