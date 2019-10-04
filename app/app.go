@@ -47,6 +47,7 @@ func NewApp(c *conf.Conf) *App {
 	mux.HandleFunc(c.API.Activate, a.activateHdlf)
 	mux.HandleFunc(c.API.Admin, a.adminHdlf)
 	mux.HandleFunc(c.API.Ping, a.pingHdlf)
+	mux.HandleFunc(c.API.Ticket, a.tktHdlf)
 
 	// Save mux in server
 	a.srv.Handler = mux

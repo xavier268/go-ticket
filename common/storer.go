@@ -19,7 +19,8 @@ type Storer interface {
 	// If found and valid, error is nil.
 	// Html fragment is a human readable feed back, always available.
 	Process(tktID string, role Role) (htmlFragment string, validity error)
-
-	// String provides some human readable statistics
+	// DisplayTkt display public information such as ticket holder
+	// Do not check validity.
+	// Only error if ticket does not exists.
 	String() string
 }

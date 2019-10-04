@@ -9,6 +9,7 @@ import (
 
 // Process ticketID, with a given role.
 // Return human readable feedback, error.
+// If no role set (RoleNone), just display a printable view of the ticket.
 func (s *MemStore) Process(tktID string, role common.Role) (string, error) {
 
 	tkt, ok := s.tkt[tktID]

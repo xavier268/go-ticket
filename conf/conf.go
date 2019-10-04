@@ -57,6 +57,7 @@ type Conf struct {
 		Ping       string //
 		Admin      string // Admin page
 		Activate   string // Activate a role
+		Ticket     string // Display ticket publicly
 		QueryParam struct {
 			QRText              string
 			Ticket              string
@@ -124,6 +125,7 @@ func (c *Conf) loadDefault() {
 	c.API.Ping = "/ping/"
 	c.API.Admin = "/admin/"
 	c.API.Activate = "/act/"
+	c.API.Ticket = "/tkt/"
 
 	// Url QUERY parameters names, no slashes.
 	c.API.QueryParam.QRText = "c"

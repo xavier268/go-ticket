@@ -22,7 +22,7 @@ func (a *App) adminHdlf(w http.ResponseWriter, r *http.Request) {
 	fmt.Println()
 
 	// Check if access is granted.
-	// ie, either credential provided and ok, or existing rola at least admin.
+	// ie, either credential provided and ok, or existing role at least admin.
 	access := (credProvided && u == a.cnf.Superuser.Name && p == a.cnf.Superuser.Password) ||
 		role >= common.RoleAdmin
 
