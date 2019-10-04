@@ -3,14 +3,17 @@ package app
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/xavier268/go-ticket/common"
 )
 
 // pingHdlf generates a ping page, displaying various informations.
 func (a *App) pingHdlf(w http.ResponseWriter, r *http.Request) {
 
-	// Get/Set device id and corresponding role
-	did := a.getDeviceID(w, r)
-	role := a.str.GetRole(did)
+	ss := a.Authorize(w, r, common.RoleNone)
+	if ss == nil {
+		return
+	}
 
 	// send response ...
 	w.Header().Add("Content-Type", "text/html")
@@ -19,7 +22,7 @@ func (a *App) pingHdlf(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<html><h1>Ping response</h1>")
 
 	fmt.Fprintf(w, "\n<br/><h2>Request</h2> <br/>Url : %s<br/>Device id : %s<br/>Role : %s",
-		r.URL, did, role.String())
+		r.URL, ss.DeviceID, ss.Role.String())
 
 	fmt.Fprintf(w, "\n<h2>Headers</h2>")
 	for k, v := range r.Header {

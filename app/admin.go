@@ -14,35 +14,15 @@ import (
 // Require at least Admin role to get in.
 func (a *App) adminHdlf(w http.ResponseWriter, r *http.Request) {
 
-	did := a.getDeviceID(w, r)
-	role := a.str.GetRole(did)
-
-	u, p, credProvided := r.BasicAuth()
-	fmt.Printf("Provided credentials : %s  %s %v\n", u, p, credProvided)
-	fmt.Println()
-
-	// Check if access is granted.
-	// ie, either credential provided and ok, or existing role at least admin.
-	access := (credProvided && u == a.cnf.Superuser.Name && p == a.cnf.Superuser.Password) ||
-		role >= common.RoleAdmin
-
-	if !access {
-		// Ask (again) for authentication
-		w.Header().Add("WWW-Authenticate", "Basic realm=go-ticket")
-		w.WriteHeader(http.StatusUnauthorized)
+	ss := a.Authorize(w, r, common.RoleAdmin)
+	if ss == nil {
 		return
 	}
 
-	// Il we successfully provided the credentials,
-	// consider that we are temporarly superuser.
-	if credProvided {
-		role = common.RoleSuper
-	}
-
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<html><h1>Admin</h1>Current role : %s</html>\n", role.String())
+	fmt.Fprintf(w, "<html><h1>Admin</h1>Current role : %s</html>\n", ss.Role.String())
 
-	for i := 0; i < int(role); i++ {
+	for i := 0; i < int(ss.Role); i++ {
 		rr := common.Role(i)
 		rs := rr.String()
 		fmt.Fprintf(w, "\n<h2>Activate %s</h2>", rs)
