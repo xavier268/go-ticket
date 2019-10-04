@@ -20,7 +20,7 @@ type SessionData struct {
 
 // Authorize provides access to session parameters and manages authorization.
 // MinimalRole defines the minimal expected role level.
-// If not authorized, return nil.
+// If not authorized, sent Unauthorized header and return nil.
 func (a *App) Authorize(w http.ResponseWriter, r *http.Request, minimalRole common.Role) *SessionData {
 
 	ss := new(SessionData)
