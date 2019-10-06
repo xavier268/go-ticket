@@ -19,5 +19,4 @@ func (a *App) qrHdlf(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "image/png")
 	w.WriteHeader(http.StatusOK)
 	a.bc.Encode(w, ss.QRTxt)
-
 }

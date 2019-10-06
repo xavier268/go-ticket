@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/xavier268/go-ticket/common"
@@ -78,6 +79,13 @@ type Conf struct {
 	Barcode struct {
 		Format common.EncodingFormat // Encoding format for qr/datamatrix code.
 	}
+
+	Templates struct {
+		Patterns []string           // All the templates that will be be preloaded. The first pattern is used to find the directory, so make it specific enough ! Overallapping pattern is not an issue.
+		Paths    []string           // Where to look for templates. Will only use the first valid path from these dirs.
+		UsedPath string             // Path actually used
+		t        *template.Template // Internal. Preloaded single template consolidation.
+	}
 }
 
 // String human readable.
@@ -99,6 +107,7 @@ func NewConf() *Conf {
 	c.loadFile()
 	c.loadEnv()
 	c.loadFlags(os.Args)
+	c.preloadTemplates()
 	return c
 }
 
@@ -110,7 +119,7 @@ func (c *Conf) Dump() *Conf {
 
 // loadDefault set the defaults.
 func (c *Conf) loadDefault() {
-	c.Version = "0.15"
+	c.Version = "0.16"
 	c.Start = time.Now()
 
 	c.Parsed.Default = true
@@ -141,6 +150,8 @@ func (c *Conf) loadDefault() {
 	c.Superuser.Realm = "go-ticket"
 
 	c.Barcode.Format = common.QR300x300H
+
+	c.Templates.Paths = append([]string{".", "./tpl", "../tpl"}, c.File.Paths...)
 }
 
 // loadFile read the config file, json format only.
@@ -215,7 +226,9 @@ func (c *Conf) loadFlags(from []string) {
 	fs.BoolVar(&c.Test.Short, "test.short", c.Test.Short, "Verbose execution.")
 	fs.BoolVar(&c.Test.Short, "short", c.Test.Short, "Verbose execution.")
 
-	fs.StringVar(&c.Test.LogFile, "test.testlogfile", c.Test.LogFile, "DO NOT USE - used by go test.")
+	fs.String("test.testlogfile", c.Test.LogFile, "DO NOT USE - used by go test.")
+	fs.String("test.timeout", "", "DO NOT USE - used by go test.")
+	fs.String("test.run", "", "DO NOT USE - used by go test.")
 
 	fs.StringVar(&c.Addr.Public, "pubaddr", c.Addr.Public, "Public address.")
 	fs.StringVar(&c.Addr.Private, "privaddr", c.Addr.Private, "Private address.")

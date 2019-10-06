@@ -7,5 +7,11 @@
     "Addr" : {
         "Comment" : "this is the public addresse",
         "Public" : "http://192.168.1.9"
+    },
+
+    "Templates" : {
+        "Comment" : "This defines the tempates that are used",
+        "Paths" : [".","./tpl","../tpl","../../tpl"],
+        "Patterns" : ["main.html","*.html"]
     }
 }
