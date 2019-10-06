@@ -13,5 +13,10 @@
         "Comment" : "This defines the tempates that are used",
         "Paths" : [".","./tpl","../tpl","../../tpl"],
         "Patterns" : ["empty.html","*.html"]
+    },
+
+    "Superuser" : {
+        "Name" : "admin",
+        "Password":"changeit"
     }
 }
