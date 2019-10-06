@@ -15,12 +15,6 @@ type Storer interface {
 	// Activate (once) using the generated requestID
 	Activate(deviceID string, requestID string) (Role, error)
 
-	// Process ticketID, with a given role.
-	// If found and valid, error is nil.
-	// Html fragment is a human readable feed back, always available.
-	Process(tktID string, role Role) (htmlFragment string, validity error)
-	// DisplayTkt display public information such as ticket holder
-	// Do not check validity.
-	// Only error if ticket does not exists.
-	String() string
+	GetTicket(tid string) Ticket
+	SaveTicket(t Ticket) error
 }

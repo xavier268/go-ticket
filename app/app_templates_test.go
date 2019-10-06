@@ -17,6 +17,6 @@ func TestTemplates(t *testing.T) {
 	ss.Role = common.RoleAdmin
 
 	// call templates
-	ss.ExecuteTemplate("main.html")
+	ss.ExecuteTemplate("ping.html")
 
 }

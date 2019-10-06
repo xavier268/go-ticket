@@ -1,0 +1,26 @@
+<!-- start ticket.html-->
+    
+{{ template "header.html" . }}
+   
+{{ template "roleBanner.html" . }}     
+<div class="text-center">
+<img src="{{tkturl .Ticket.TID | qrurl }}"></img><br/>
+<em>{{ tkturl .Ticket.TID }}</em></:em> <br/>
+{{ .Ticket.Holder }} {{.Ticket.Mail}} <br/>
+
+{{ if not ( isNone .Role ) }}
+
+    {{ if .Ticket.Valid }}
+        <div class="bg-success text-center font-weight-bolder">Ticket is valid</div>        
+        Entries : {{ .Ticket.Entries}}<br/>
+        Exits : {{ .Ticket.Exits}}<br/>   
+    {{ else }}
+        <div class="bg-danger text-center font-weight-bolder">Ticket is NOT valid</div>
+        You cannot use this ticket to enter.
+    {{ end }}
+
+{{ end }}
+</div>
+{{ template "footer.html" . }}
+
+<!-- end ticket.html-->

@@ -48,6 +48,8 @@ func NewApp(c *conf.Conf) *App {
 	mux.HandleFunc(c.API.Admin, a.adminHdlf)
 	mux.HandleFunc(c.API.Ping, a.pingHdlf)
 	mux.HandleFunc(c.API.Ticket, a.tktHdlf)
+	mux.HandleFunc(c.API.Logout, a.logoutHdlf)
+	mux.HandleFunc("/", a.h404)
 
 	// Save mux in server
 	a.srv.Handler = mux
@@ -82,4 +84,10 @@ func (a *App) Close() error {
 		a.str.Close()
 	}
 	return nil
+}
+
+// h404 displays 404 not found page.
+func (a *App) h404(w http.ResponseWriter, r *http.Request) {
+	ss := a.Authorize(w, r, common.RoleNone)
+	ss.ExecuteTemplate("404.html")
 }

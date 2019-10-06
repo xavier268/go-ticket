@@ -18,8 +18,10 @@ type SessionData struct {
 	CredentialsUser           string      // From basic auth
 	CredentialsProvided       bool        // From basic auth
 	CredentialsValid          bool        // From basic auth
-	*conf.Conf                            // Link to the current config
-	io.Writer                             // Link to ResponseWriter interface object
+
+	*conf.Conf               // Link to the current config
+	io.Writer                // Link to ResponseWriter interface object
+	Ticket     common.Ticket // Link to ticket to display
 }
 
 // Authorize provides access to session parameters and manages authorization.

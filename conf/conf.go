@@ -17,7 +17,8 @@ import (
 
 // Conf defines the structure of a configuration object.
 type Conf struct {
-	Version string // Version
+	Version    string // Version
+	TimeFormat string // Magic string to format the time/date
 
 	Command string    // Command name typed
 	Args    []string  // Non-flag arguments
@@ -55,10 +56,11 @@ type Conf struct {
 
 	API struct { // path fragments for various pages
 		QRImage    string // To display qr code
-		Ping       string //
+		Ping       string // Display role and possibly more, depending on role
 		Admin      string // Admin page
 		Activate   string // Activate a role
 		Ticket     string // Display ticket publicly
+		Logout     string // Back to RoleNone
 		QueryParam struct {
 			QRText              string
 			Ticket              string
@@ -121,6 +123,7 @@ func (c *Conf) Dump() *Conf {
 func (c *Conf) loadDefault() {
 	c.Version = "0.16"
 	c.Start = time.Now()
+	c.TimeFormat = "2 Jan 2006, 15:04:04"
 
 	c.Parsed.Default = true
 
@@ -130,12 +133,12 @@ func (c *Conf) loadDefault() {
 	c.Addr.Private = ":8080"
 
 	// API fragments to bind to handlers.
-	// Note that slashes are required.
 	c.API.QRImage = "/q/"
 	c.API.Ping = "/ping/"
 	c.API.Admin = "/admin/"
 	c.API.Activate = "/act/"
 	c.API.Ticket = "/tkt/"
+	c.API.Logout = "/logout/"
 
 	// Url QUERY parameters names, no slashes.
 	c.API.QueryParam.QRText = "c"

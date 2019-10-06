@@ -3,8 +3,13 @@ package conf
 import (
 	"fmt"
 	"io"
+	"net/url"
 	"path"
+	"strings"
 	"text/template"
+	"time"
+
+	"github.com/xavier268/go-ticket/common"
 )
 
 // Preload templates from Conf.Templates array, using the provided paths.
@@ -19,10 +24,32 @@ func (c *Conf) preloadTemplates() {
 	var err error
 	c.Templates.UsedPath = ""
 
+	// Define function map
+	t := template.New("").Funcs(
+		template.FuncMap{
+			"isAdmin": func(role common.Role) bool { return role >= common.RoleAdmin },
+			"isNone":  func(role common.Role) bool { return role == common.RoleNone },
+			"now":     func() string { return time.Now().Format(c.TimeFormat) },
+			"tkturl": func(tid string) string {
+				u := path.Join(c.Addr.Public, c.API.Ticket)
+				u = strings.Replace(u, "http:/", "http://", -1)
+				u = strings.Replace(u, "https:/", "https://", -1)
+				u = u + "?" + c.API.QueryParam.Ticket + "=" + tid
+				return u
+			},
+			"qrurl": func(targetUrl string) string { // targetUrl is the unescaped url
+				u := path.Join(c.Addr.Public, c.API.QRImage)
+				u = strings.Replace(u, "http:/", "http://", -1)
+				u = strings.Replace(u, "https:/", "https://", -1)
+				u = u + "?" + c.API.QueryParam.QRText + "=" + url.QueryEscape(targetUrl)
+				return u
+			},
+		})
+
 	// identify path and load the first template
 	for _, p := range c.Templates.Paths {
 		f := path.Join(p, c.Templates.Patterns[0])
-		c.Templates.t, err = template.ParseGlob(f)
+		c.Templates.t, err = t.ParseGlob(f)
 		if err == nil {
 			c.Templates.UsedPath = p
 			if c.Test.Verbose {

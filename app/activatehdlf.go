@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/xavier268/go-ticket/common"
@@ -18,16 +17,10 @@ func (a *App) activateHdlf(w http.ResponseWriter, r *http.Request) {
 		panic("Unexpected nil result for access with RoleNone ?!")
 	}
 
-	// Attempt activate
-	role, err := a.str.Activate(ss.DeviceID, ss.ActReqID)
+	// Attempt activation
+	a.str.Activate(ss.DeviceID, ss.ActReqID)
 
-	if err != nil {
-		fmt.Fprintf(w, "<html><h1>Activation failure</h1> Role is still : %s</html>",
-			role.String())
-		return
-	}
+	// Redirect to absolute ping url  ...
+	http.Redirect(w, r, a.CreateAbsoluteURL(a.cnf.API.Ping), http.StatusFound)
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<html><h1>Activation success</h1>Role is now : %s</html>",
-		role.String())
 }

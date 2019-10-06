@@ -1,9 +1,7 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
 	"path"
 	"strings"
 
@@ -20,28 +18,36 @@ func (a *App) adminHdlf(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<html><h1>Admin</h1>Current role : %s</html>\n", ss.Role.String())
+
+	ss.ExecuteTemplate("header.html")
+
+	type param struct {
+		U string // url to be encoded in the qr code
+		T string // Text to display
+	}
 
 	for i := 0; i < int(ss.Role); i++ {
-		rr := common.Role(i)
-		rs := rr.String()
-		fmt.Fprintf(w, "\n<h2>Activate %s</h2>", rs)
-		actRq := a.CreateActivationRequestURL(rr)
-		imURL := path.Join("/", a.cnf.API.QRImage) +
-			"?" + a.cnf.API.QueryParam.QRText +
-			"=" + url.QueryEscape(actRq)
-
-		fmt.Fprintf(w, "\n<img src=%s></img><br/>%s<br/>", imURL, actRq)
+		data := new(param)
+		r := common.Role(i)
+		data.U = a.CreateActivationRequestURL(r)
+		data.T = "Scan me to login for " + r.String()
+		a.cnf.ExecuteTemplate(w, "adminFragment.html", data)
 	}
 
 	// Ping facility
-	ping := path.Join(a.cnf.Addr.Public, a.cnf.API.Ping)
-	ping = strings.Replace(ping, "http:/", "http://", -1)
-	ping = strings.Replace(ping, "https:/", "https://", -1)
-	imURL := path.Join("/", a.cnf.API.QRImage) +
-		"?" + a.cnf.API.QueryParam.QRText +
-		"=" + url.QueryEscape(ping)
-	fmt.Fprintf(w, "\n<h2>Ping</h2><img src=%s></img><br/>%s<br/>", imURL, ping)
+	data := new(param)
+	data.U = a.CreateAbsoluteURL(a.cnf.API.Ping)
+	data.T = "Scan me to ping the server"
+	a.cnf.ExecuteTemplate(w, "adminFragment.html", data)
+
+	// Logout
+	data = new(param)
+	data.U = a.CreateAbsoluteURL(a.cnf.API.Logout)
+	data.T = "Scan me to logout"
+	a.cnf.ExecuteTemplate(w, "adminFragment.html", data)
+
+	ss.ExecuteTemplate("footer.html")
+
 }
 
 // CreateActivationRequestURL generate a Activation request,
@@ -55,4 +61,13 @@ func (a *App) CreateActivationRequestURL(rr common.Role) string {
 	actRq = strings.Replace(actRq, "http:/", "http://", 1)
 	actRq = strings.Replace(actRq, "https:/", "http://", 1)
 	return actRq
+}
+
+// CreateAbsoluteURL from a relative url using public address.
+func (a *App) CreateAbsoluteURL(relativeURL string) string {
+	u := path.Join(a.cnf.Addr.Public, relativeURL)
+	u = strings.Replace(u, "http:/", "http://", 1)
+	u = strings.Replace(u, "https:/", "https://", 1)
+	return u
+
 }

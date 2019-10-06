@@ -13,10 +13,10 @@ import (
 // MemStore is the Store implementation.
 // You should usually have only one.
 type MemStore struct {
-	did  map[string]common.Role // deviceID to roles
-	act  map[string]common.Role // pending activation requests
-	tkt  map[string]ticket      // ticket database
-	rand *rand.Rand             // random generator
+	did  map[string]common.Role   // deviceID to roles
+	act  map[string]common.Role   // pending activation requests
+	tkt  map[string]common.Ticket // ticket database
+	rand *rand.Rand               // random generator
 }
 
 // Compiler check
@@ -27,7 +27,7 @@ func New() *MemStore {
 	s := new(MemStore)
 	s.did = make(map[string]common.Role)
 	s.act = make(map[string]common.Role)
-	s.tkt = make(map[string]ticket)
+	s.tkt = make(map[string]common.Ticket)
 	// initialize random gen
 	s.rand = rand.New(rand.NewSource(time.Now().UnixNano() + 9999999))
 	return s
@@ -77,6 +77,17 @@ func (s *MemStore) CreateRequestID(role common.Role) (rq string) {
 	rq = strconv.FormatInt(s.rand.Int63(), 36)
 	s.act[rq] = role
 	return rq
+}
+
+// GetTicket retieves a ticket from data store.
+func (s *MemStore) GetTicket(tid string) common.Ticket {
+	return s.tkt[tid]
+}
+
+// SaveTicket in store.
+func (s *MemStore) SaveTicket(t common.Ticket) error {
+	s.tkt[t.TID] = t
+	return nil
 }
 
 // String() for debugging.

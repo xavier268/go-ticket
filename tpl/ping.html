@@ -1,0 +1,16 @@
+<!-- start ping.html-->
+    
+{{ template "header.html" . }}
+   
+{{ template "roleBanner.html" . }}     
+
+Running on version {{ .Version }}
+
+{{ if isAdmin .Role }} 
+    <h2>Debugging information</h2>
+    <pre>{{.}}</pre> 
+{{ end }}
+
+{{ template "footer.html" . }}
+
+<!-- end ping.html-->

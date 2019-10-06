@@ -5,7 +5,7 @@ import "fmt"
 // Role defines the role a device can be granted.
 type Role int
 
-// Predfined Roles for devices.
+// Predefined Roles for devices.
 const (
 	RoleNone Role = iota // Zero-value, does nothing.
 	RoleEntry

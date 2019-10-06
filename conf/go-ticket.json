@@ -12,6 +12,6 @@
     "Templates" : {
         "Comment" : "This defines the tempates that are used",
         "Paths" : [".","./tpl","../tpl","../../tpl"],
-        "Patterns" : ["main.html","*.html"]
+        "Patterns" : ["empty.html","*.html"]
     }
 }
