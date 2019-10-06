@@ -59,7 +59,8 @@ func (s *MemStore) Close() error {
 	return nil
 }
 
-// Activate (only once !) using the generated requestID
+// Activate using the generated requestID
+// It may be called multiple times, but will only activate a single device.
 func (s *MemStore) Activate(deviceID string, requestID string) (common.Role, error) {
 	role, ok := s.act[requestID]
 	if !ok {

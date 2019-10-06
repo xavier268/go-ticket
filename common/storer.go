@@ -10,9 +10,11 @@ type Storer interface {
 	SetRole(deviceID string, role Role)
 	UnsetRole(deviceID string)
 
-	// CreateRequestID generates a one-time request ID to activate for a given role.
+	// CreateRequestID generates a request ID to activate for a given role.
 	CreateRequestID(role Role) (requestID string)
-	// Activate (once) using the generated requestID
+	// Activate using the generated requestID
+	// You may implemet it so that activation can only happens within certain timeframe,
+	// or only once, or only for a single device, ...
 	Activate(deviceID string, requestID string) (Role, error)
 
 	GetTicket(tid string) Ticket
