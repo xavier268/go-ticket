@@ -1,6 +1,7 @@
 module github.com/xavier268/go-ticket
 
 require (
+	github.com/aws/aws-sdk-go v1.25.6
 	github.com/boombuler/barcode v1.0.0
 	github.com/google/pprof v0.0.0-20190908185732-236ed259b199 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect

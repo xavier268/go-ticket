@@ -25,7 +25,7 @@ func (m *MockMailer) Ping() error {
 }
 
 // Send sends a mail.
-func (m *MockMailer) Send(from, to, obj, txt string) error {
-	fmt.Printf("\nFROM : %s\nTO   : %s\n,OBJ   : %s\n%s\n", from, to, obj, txt)
+func (m *MockMailer) Send(from, to, obj, txt, html string) error {
+	fmt.Printf("\nFROM : %s\nTO   : %s\n,OBJ   : %s\n===texte===\n%s\n====html====\n%s\n", from, to, obj, txt, html)
 	return nil
 }
