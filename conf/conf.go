@@ -38,15 +38,17 @@ type Conf struct {
 	}
 
 	Env struct {
-		Home string // env
-		User string // env
-		PWD  string // env
+		Home   string // env
+		User   string // env
+		PWD    string // env
+		Travis bool   // are we running on Travis ?
 	}
 
 	Test struct {
 		Verbose bool   // Verbose
 		Short   bool   // Short tests
 		LogFile string // not used. From go test.
+
 	}
 
 	Addr struct {
@@ -208,6 +210,8 @@ func (c *Conf) loadEnv() {
 			c.Env.User = v
 		case "PWD":
 			c.Env.PWD = v
+		case "TRAVIS":
+			c.Env.Travis = true
 		}
 	}
 	c.Parsed.Env = true
