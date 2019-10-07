@@ -20,8 +20,9 @@ func TestSendMail(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	mess := "Testing ... " + time.Now().String()
-	e = m.Send("xavier@gandillot.com", "xavier.gandillot@gmail.com", "test email", mess, mess)
+	txt := "\n\nTesting ... " + time.Now().String()
+	html := "<html><body><br/>" + txt + "</body></html>"
+	e = m.Send("go-ticket@yopmail.com", "xavier@yopmail.com", "test email", txt, html)
 	if e != nil {
 		t.Fatal(e)
 	}

@@ -12,12 +12,12 @@ import (
 
 // SessionData is the (maximum) session information structure.
 type SessionData struct {
-	DeviceID                  string      // from cookie
-	Role                      common.Role // from database
-	TicketID, ActReqID, QRTxt string      // from Query Params
-	CredentialsUser           string      // From basic auth
-	CredentialsProvided       bool        // From basic auth
-	CredentialsValid          bool        // From basic auth
+	DeviceID                        string      // from cookie
+	Role                            common.Role // from database
+	TicketID, ActReqID, QRTxt, Mail string      // from Query Params
+	CredentialsUser                 string      // From basic auth
+	CredentialsProvided             bool        // From basic auth
+	CredentialsValid                bool        // From basic auth
 
 	*conf.Conf               // Link to the current config
 	io.Writer                // Link to ResponseWriter interface object
@@ -28,6 +28,11 @@ type SessionData struct {
 // MinimalRole defines the minimal expected role level.
 // If not authorized, sent Unauthorized header and return nil.
 func (a *App) Authorize(w http.ResponseWriter, r *http.Request, minimalRole common.Role) *SessionData {
+
+	// Reject any other method than get.
+	if r.Method != http.MethodGet {
+		return nil
+	}
 
 	ss := new(SessionData)
 	ss.Conf = a.cnf
@@ -64,6 +69,7 @@ func (a *App) Authorize(w http.ResponseWriter, r *http.Request, minimalRole comm
 	ss.TicketID = r.URL.Query().Get(a.cnf.API.QueryParam.Ticket)
 	ss.ActReqID = r.URL.Query().Get(a.cnf.API.QueryParam.ActivationRequestID)
 	ss.QRTxt = r.URL.Query().Get(a.cnf.API.QueryParam.QRText)
+	ss.Mail = r.URL.Query().Get(a.cnf.API.QueryParam.Mail)
 
 	// Read credentials if provided
 	pwd := ""

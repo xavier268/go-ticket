@@ -24,6 +24,8 @@ type Conf struct {
 	Args    []string  // Non-flag arguments
 	Start   time.Time // Date started
 
+	MailSender string // Email sending the emails
+
 	Parsed struct { // What exactly did we read yet ?
 		Default bool
 		File    bool
@@ -63,10 +65,12 @@ type Conf struct {
 		Activate   string // Activate a role
 		Ticket     string // Display ticket publicly
 		Logout     string // Back to RoleNone
+		Mail       string // Mail either ticket, or actReq , or ...
 		QueryParam struct {
 			QRText              string
 			Ticket              string
 			ActivationRequestID string
+			Mail                string
 		}
 	}
 
@@ -132,6 +136,8 @@ func (c *Conf) loadDefault() {
 	c.Start = time.Now()
 	c.TimeFormat = "2 Jan 2006, 15:04:04"
 
+	c.MailSender = "go-ticket@yopmail.com"
+
 	c.Parsed.Default = true
 
 	c.File.Name = "go-ticket.json"
@@ -146,11 +152,13 @@ func (c *Conf) loadDefault() {
 	c.API.Activate = "/act/"
 	c.API.Ticket = "/tkt/"
 	c.API.Logout = "/logout/"
+	c.API.Mail = "/mail/"
 
 	// Url QUERY parameters names, no slashes.
 	c.API.QueryParam.QRText = "c"
 	c.API.QueryParam.Ticket = "t"
 	c.API.QueryParam.ActivationRequestID = "a"
+	c.API.QueryParam.Mail = "m"
 
 	c.Cookie.Name = "deviceid"
 	c.Cookie.MaxAge = 3600 * 24 // 24 h

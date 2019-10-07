@@ -46,7 +46,7 @@ func get(u string) (string, int) {
 // get a protected page by providing credentials.
 func getWithCredentials(url, user, password string) (string, int) {
 	client := new(http.Client)
-	rq, err := http.NewRequest("GET", url, nil)
+	rq, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		panic(err)
 	}
