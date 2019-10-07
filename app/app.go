@@ -83,6 +83,10 @@ func (a *App) Close() error {
 	if a.str != nil {
 		a.str.Close()
 	}
+
+	if a.cnf.Test.Verbose {
+		fmt.Println("Application and underlying services were closed")
+	}
 	return nil
 }
 

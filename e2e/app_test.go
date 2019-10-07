@@ -14,7 +14,7 @@ func TestPing(t *testing.T) {
 
 	// skip travis : no public address available !
 	if c.Env.Travis {
-		fmt.Println("Travis detected - skippi,g end to end tests")
+		fmt.Println("Travis detected - skipping end to end tests - run them locally on your development machine !")
 		t.Skip()
 	}
 
