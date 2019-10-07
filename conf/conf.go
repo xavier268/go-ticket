@@ -97,7 +97,12 @@ func (c *Conf) String() string {
 	if e != nil {
 		fmt.Println(e)
 	}
-	return string(s)
+
+	ss := string(s)
+	if c.Templates.t != nil {
+		ss += "\n" + c.Templates.t.DefinedTemplates()[2:]
+	}
+	return string(ss)
 
 }
 

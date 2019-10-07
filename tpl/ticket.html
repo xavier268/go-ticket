@@ -6,7 +6,7 @@
 <div class="text-center">
 <img src="{{tkturl .Ticket.TID | qrurl }}"></img><br/>
 <em>{{ tkturl .Ticket.TID }}</em></:em> <br/>
-{{ .Ticket.Holder }} {{.Ticket.Mail}} <br/>
+{{ .Ticket.Holder }} <em>{{.Ticket.Mail}} </em><br/>
 
 {{ if not ( isNone .Role ) }}
 
