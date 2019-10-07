@@ -12,6 +12,12 @@ func TestPing(t *testing.T) {
 	a, c := launch()
 	defer a.Close()
 
+	// skip travis : no public address available !
+	if c.Env.Travis {
+		fmt.Println("Travis detected - skippi,g end to end tests")
+		t.Skip()
+	}
+
 	p, s := get(a.CreateAbsoluteURL(c.API.Ping))
 
 	if s != http.StatusOK {
@@ -29,6 +35,12 @@ func TestPing(t *testing.T) {
 func TestAuthorization(t *testing.T) {
 	a, c := launch()
 	defer a.Close()
+
+	// Skip travis - no public address available !
+	if c.Env.Travis {
+		fmt.Println("Travis detected - skippi,g end to end tests")
+		t.Skip()
+	}
 
 	// Unauthorized access should fail ...
 	p, s := get(a.CreateAbsoluteURL(c.API.Admin))
