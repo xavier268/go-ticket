@@ -13,21 +13,21 @@ import (
 	"github.com/xavier268/go-ticket/common"
 )
 
-// SESMail is the mail sending object.
-type SESMail struct {
-	*ses.SES
+// SesMail is the mail sending object.
+type SesMail struct {
+	svc *ses.SES
 }
 
 // Compiler checks SESMail is a Mailer.
-var _ common.Mailer = new(SESMail)
+var _ common.Mailer = new(SesMail)
 
-// NewSESMail creates a new mail sending objet.
+// New creates a new mail sending objet.
 // The correct AWS credentials must be available loacally or via the envirnement.
 // (see AWS documentation)
-func NewSESMail() *SESMail {
+func New() *SesMail {
 	var err error
 
-	m := new(SESMail)
+	m := new(SesMail)
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-1")},
 	)
@@ -35,22 +35,22 @@ func NewSESMail() *SESMail {
 		fmt.Println(err)
 		panic("Could not initiate a SESMail Session ?!")
 	} else {
-		m.SES = ses.New(sess)
+		m.svc = ses.New(sess)
 	}
 	return m
 }
 
 // Ping check health status.
 // Very basic at this stage, consider actually sending a test mail ?
-func (m *SESMail) Ping() error {
-	if m.SES != nil {
+func (m *SesMail) Ping() error {
+	if m.svc != nil {
 		return nil
 	}
 	return errors.New("SES Mailer could not be created")
 }
 
 // Send the provided email.
-func (m *SESMail) Send(from, to, obj, txt string, html string) (err error) {
+func (m *SesMail) Send(from, to, obj, txt string, html string) (err error) {
 
 	input := &ses.SendEmailInput{
 		Destination: &ses.Destination{
@@ -75,7 +75,7 @@ func (m *SESMail) Send(from, to, obj, txt string, html string) (err error) {
 		Source: aws.String(from),
 	}
 
-	_, err = m.SendEmail(input)
+	_, err = m.svc.SendEmail(input)
 
 	if err != nil {
 		fmt.Println(err)

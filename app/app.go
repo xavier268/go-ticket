@@ -13,6 +13,7 @@ import (
 	"github.com/xavier268/go-ticket/conf"
 	"github.com/xavier268/go-ticket/impl/barcode"
 	"github.com/xavier268/go-ticket/impl/memstore"
+	"github.com/xavier268/go-ticket/impl/sesmail"
 )
 
 // App is the application server.
@@ -22,6 +23,7 @@ type App struct {
 	str  common.Storer   // data store
 	rand *rand.Rand      // random generator
 	bc   common.BarCoder // barcode encoding
+	ml   common.Mailer   // Mail sending
 }
 
 // NewApp constructs  a new AppServer.
@@ -33,6 +35,7 @@ func NewApp(c *conf.Conf) *App {
 	a.srv.Addr = c.Addr.Private
 	a.cnf = c
 	a.str = memstore.New()
+	a.ml = sesmail.New()
 	a.rand = rand.New(rand.NewSource(time.Now().UnixNano() + 111111111)) // initialize random gen
 	a.bc = barcode.New()
 	a.bc.SetFormat(a.cnf.Barcode.Format)

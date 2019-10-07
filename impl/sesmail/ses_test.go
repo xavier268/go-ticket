@@ -14,13 +14,14 @@ func TestSendMail(t *testing.T) {
 		t.Skip()
 	}
 
-	m := NewSESMail()
+	m := New()
 	e := m.Ping()
 	if e != nil {
 		t.Fatal(e)
 	}
 
-	e = m.Send("xavier@twiceagain.com", "xavier.gandillot@gmail.com", "test email", time.Now().String(), "")
+	mess := "Testing ... " + time.Now().String()
+	e = m.Send("xavier@gandillot.com", "xavier.gandillot@gmail.com", "test email", mess, mess)
 	if e != nil {
 		t.Fatal(e)
 	}
