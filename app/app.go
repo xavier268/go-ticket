@@ -52,6 +52,7 @@ func NewApp(c *conf.Conf) *App {
 	mux.HandleFunc(c.API.Ping, a.pingHdlf)
 	mux.HandleFunc(c.API.Ticket, a.tktHdlf)
 	mux.HandleFunc(c.API.Logout, a.logoutHdlf)
+	mux.HandleFunc(c.API.MailTicket, a.mailTicketHdlf)
 	mux.HandleFunc("/", a.h404)
 
 	// Save mux in server

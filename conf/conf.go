@@ -65,7 +65,7 @@ type Conf struct {
 		Activate   string // Activate a role
 		Ticket     string // Display ticket publicly
 		Logout     string // Back to RoleNone
-		Mail       string // Mail either ticket, or actReq , or ...
+		MailTicket string // Mail a ticket
 		QueryParam struct {
 			QRText              string
 			Ticket              string
@@ -152,7 +152,7 @@ func (c *Conf) loadDefault() {
 	c.API.Activate = "/act/"
 	c.API.Ticket = "/tkt/"
 	c.API.Logout = "/logout/"
-	c.API.Mail = "/mail/"
+	c.API.MailTicket = "/mt/"
 
 	// Url QUERY parameters names, no slashes.
 	c.API.QueryParam.QRText = "c"
